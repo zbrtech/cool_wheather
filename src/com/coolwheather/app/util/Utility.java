@@ -1,5 +1,16 @@
 package com.coolwheather.app.util;
 
+import java.security.PublicKey;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import com.coolwheather.app.db.CoolWheatherDB;
@@ -75,5 +86,50 @@ public class Utility {
 			}
 		}
 		return false;
+	}
+	/**
+	 * 解析服务器返回的json数据，并将解析的数据存储到本地
+	 */
+	public static void handleWheatherResponse(Context context,String response){
+		try {
+			JSONObject jsonObject = new JSONObject(response);
+			JSONObject wheatherInfo = jsonObject.getJSONObject("wheatherinfo");
+			String cityName = wheatherInfo.getString("city");
+			String cityCode = wheatherInfo.getString("cityid");
+			String temp1  =wheatherInfo.getString("temp1");
+			String temp2 = wheatherInfo.getString("temp2");
+			String wheatherDesp  =wheatherInfo.getString("weather");
+			String publishTime = wheatherInfo.getString("ptime");
+			saveWheatherInfo(context,cityName,cityCode,temp1,temp2,wheatherDesp,publishTime);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * 将服务器返回的所有天气信息存储到SharedPreferences文件中
+	 * @param context
+	 * @param cityName
+	 * @param cityCode
+	 * @param temp1
+	 * @param temp2
+	 * @param wheatherDesp
+	 * @param publishTime
+	 */
+	private static void saveWheatherInfo(Context context, String cityName,
+			String wheatherCode, String temp1, String temp2, String wheatherDesp,
+			String publishTime) {
+		// TODO Auto-generated method stub
+		SimpleDateFormat sdf  = new SimpleDateFormat("yyyy年M月d日", Locale.CHINA);
+		SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+		editor.putBoolean("city_selected", true);
+		editor.putString("city_name", cityName);
+		editor.putString("wheather_code", wheatherCode);
+		editor.putString("temp1", temp1);
+		editor.putString("temp2", temp2);
+		editor.putString("wheather_desp", wheatherDesp);
+		editor.putString("publish_time", publishTime);
+		editor.putString("current_date", sdf.format(new Date()));
+		editor.commit();
 	}
 }

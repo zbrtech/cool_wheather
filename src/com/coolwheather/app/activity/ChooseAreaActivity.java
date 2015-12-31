@@ -5,7 +5,10 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
@@ -60,11 +63,24 @@ public class ChooseAreaActivity extends Activity {
 	 * 县列表
 	 */
 	private List<County> countyList;
+	/**
+	 * 是否从WheatherActivity中跳转过来
+	 */
+	private boolean isFromWheatherActivity;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		isFromWheatherActivity = getIntent().getBooleanExtra("from_wheather_activity", false);
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+		// 已经选择了城市且不是从WeatherActivity跳转过来,才会直接跳转到WheatherActivity
+		if(sp.getBoolean("city_selected", false) && !isFromWheatherActivity){
+			Intent intent = new Intent(this,WheatherActivity.class);
+			startActivity(intent);
+			finish();
+			return;
+		}
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.choose_area);
 
@@ -87,6 +103,12 @@ public class ChooseAreaActivity extends Activity {
 				} else if (currentLevel == LEVEL_CITY) {
 					selectedCity = cityList.get(index);
 					queryCounty();
+				} else if(currentLevel == LEVEL_COUNTY){
+					String countyCode = countyList.get(index).getCountyCode();
+					Intent intent = new Intent();
+					intent.putExtra("county_code", countyCode);
+					startActivity(intent);
+					finish();
 				}
 			}
 		});
@@ -245,6 +267,10 @@ public class ChooseAreaActivity extends Activity {
 		}else if(currentLevel == LEVEL_CITY){
 			queryProvince();
 		}else{
+			if(isFromWheatherActivity){
+				Intent intent = new Intent(this,WheatherActivity.class);
+				startActivity(intent);
+			}
 			finish();
 		}
 	}
