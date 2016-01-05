@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.coolwheather.app.R;
+import com.coolwheather.app.service.AutoUpdateService;
 import com.coolwheather.app.util.HttpCallbackListener;
 import com.coolwheather.app.util.HttpUtil;
 import com.coolwheather.app.util.Utility;
@@ -164,6 +165,9 @@ public class WheatherActivity extends Activity implements OnClickListener {
 		currentDateText.setText(sp.getString("current_date", ""));
 		wheatherInfo.setVisibility(View.VISIBLE);
 		cityName.setVisibility(View.VISIBLE);
+		
+		Intent intent = new Intent(this,AutoUpdateService.class);
+		startService(intent);
 	}
 
 	@Override

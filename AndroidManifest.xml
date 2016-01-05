@@ -7,7 +7,8 @@
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="21" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -23,10 +24,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <activity 
-            android:name="com.coolwheather.app.activity.WheatherActivity"
-            ></activity>
+        <activity android:name="com.coolwheather.app.activity.WheatherActivity" >
+        </activity>
+
+        <service android:name="com.coolwheather.app.service.AutoUpdateService" >
+        </service>
+
+        <receiver android:name="com.coolwheather.app.receiver.AutoUpdateReceiver" >
+        </receiver>
     </application>
 
 </manifest>
